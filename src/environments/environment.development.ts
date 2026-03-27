@@ -14,9 +14,9 @@ export const environment = {
         //apiUrl: 'https://wheat-capybara-997939.hostingersite.com/api',
 
         //live
-      apiUrl: 'https://api.rp-vespera.cloud/api',
+      //apiUrl: 'https://api.rp-vespera.cloud/api',
 
         //staging
-      //apiUrl: 'https://staging.rp-vespera.cloud/api',
+     apiUrl: 'https://staging.rp-vespera.cloud/api',
 
 };
