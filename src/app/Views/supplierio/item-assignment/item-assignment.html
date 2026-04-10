@@ -1,0 +1,79 @@
+<div class="supplier-page">
+  <div class="layout">
+    <a routerLink="/supplierio" class="top-link">Menu</a>
+
+    <div class="card stack">
+      <h1>Supplier Item Assignment</h1>
+
+      <div *ngIf="loading" class="status">Loading assignment data...</div>
+      <div *ngIf="error" class="status error">{{ error }}</div>
+      <div *ngIf="message" class="status success">{{ message }}</div>
+
+      <div class="card stack">
+        <h2>Assign Item to Supplier</h2>
+
+        <div class="field">
+          <label for="supplier">Supplier</label>
+          <select id="supplier" [(ngModel)]="selectedBparId">
+            <option value="">Select supplier</option>
+            <option *ngFor="let supplier of uniqueSuppliers" [value]="supplier.bpar_i_person_id">
+              {{ supplier.name1 }} - {{ supplier.email_add || 'No email' }}
+            </option>
+          </select>
+        </div>
+
+        <div *ngIf="selectedSupplier" class="status">
+          <div class="two-column">
+            <div><strong>bpar_i_person_id</strong><br />{{ selectedSupplier?.bpar_i_person_id }}</div>
+            <div><strong>s_bpartner_id</strong><br />{{ selectedSupplier?.s_bpartner_id }}</div>
+            <div><strong>Contact</strong><br />{{ selectedSupplier?.contact_number || '-' }}</div>
+            <div><strong>Phone</strong><br />{{ selectedSupplier?.phone || '-' }}</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="item">Supplier Item</label>
+          <select id="item" [(ngModel)]="selectedItemId">
+            <option value="">Select item</option>
+            <option *ngFor="let item of items" [value]="item.id">
+              {{ item.item_category }} - {{ item.item_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="row">
+          <button type="button" (click)="handleAssign()" [disabled]="saving">{{ saving ? 'Saving...' : 'Assign Item' }}</button>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>Assigned Supplier Items</h2>
+
+        <div *ngIf="!records.length" class="status">No supplier item assignments found.</div>
+
+        <div *ngIf="records.length" class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>bpar_i_person_id</th>
+                <th>s_bpartner_id</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of records">
+                <td>{{ record.bpar_i_person_id }}</td>
+                <td>{{ record.s_bpartner_id }}</td>
+                <td>{{ record.item_name || '-' }}</td>
+                <td>{{ record.item_category || '-' }}</td>
+                <td><button type="button" class="danger" (click)="handleDelete(record.id)">Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
