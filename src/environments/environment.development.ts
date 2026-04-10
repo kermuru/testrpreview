@@ -1,7 +1,7 @@
 export const environment = {
 
         //local
-      //apiUrl: 'http://localhost:8000/api',
+     //apiUrl: 'http://localhost:8000/api',
 
         //old backend system
 
@@ -17,6 +17,6 @@ export const environment = {
       //apiUrl: 'https://api.rp-vespera.cloud/api',
 
         //staging
-     apiUrl: 'https://staging.rp-vespera.cloud/api',
+   apiUrl: 'https://staging.rp-vespera.cloud/api',
 
 };

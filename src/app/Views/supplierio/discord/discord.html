@@ -1,0 +1,45 @@
+<div class="supplier-page">
+  <div class="layout">
+    <a routerLink="/supplierio" class="top-link">Menu</a>
+
+    <div class="card stack">
+      <h1>Discord User Mapping</h1>
+
+      <div *ngIf="loading" class="status">Loading...</div>
+      <div *ngIf="error" class="status error">{{ error }}</div>
+      <div *ngIf="message" class="status success">{{ message }}</div>
+
+      <div class="card stack">
+        <div class="field">
+          <label for="bpar">BPAR Name</label>
+          <select id="bpar" [(ngModel)]="selectedBparId" (ngModelChange)="onBparChange()">
+            <option value="">Select BPAR name</option>
+            <option *ngFor="let item of bparOptions; let i = index" [value]="item.bpar_i_person_id">
+              {{ item.name1 || ('BPAR ' + item.bpar_i_person_id) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>bpar_i_person_id</label>
+          <input [value]="selectedBparId" readonly placeholder="Auto-filled" />
+        </div>
+
+        <div class="field">
+          <label>s_bpartner_id</label>
+          <input [value]="sBpartnerId" readonly placeholder="Auto-filled" />
+        </div>
+
+        <div class="field">
+          <label for="discordUserId">discord_user_id</label>
+          <input id="discordUserId" [(ngModel)]="discordUserId" placeholder="Enter Discord User ID" />
+        </div>
+
+        <div class="row">
+          <button type="button" (click)="handleSave()" [disabled]="saving">{{ saving ? 'Saving...' : record ? 'Update' : 'Save' }}</button>
+          <button *ngIf="record" type="button" class="danger" (click)="handleDelete()" [disabled]="saving">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<div class="supplier-page">
+  <div class="layout">
+    <a routerLink="/supplierio" class="top-link">Menu</a>
+
+    <div class="card stack">
+      <h1>NLIO Supplier Assignment</h1>
+
+      <div class="row">
+        <div class="field">
+          <label for="documentNo">Document No</label>
+          <input id="documentNo" [(ngModel)]="documentNo" placeholder="Enter NLIO document number" />
+        </div>
+        <div class="row" style="align-items: end;">
+          <button type="button" (click)="handleSearch()">Search NLIO</button>
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="status">Loading...</div>
+      <div *ngIf="error" class="status error">{{ error }}</div>
+      <div *ngIf="message" class="status success">{{ message }}</div>
+
+      <div *ngIf="nlioRecords.length" class="status stack">
+        <div class="two-column">
+          <div><strong>Document No</strong><br />{{ nlioRecords[0].documentno }}</div>
+          <div><strong>Owner</strong><br />{{ nlioRecords[0].name1 || '-' }}</div>
+          <div><strong>Contact No</strong><br />{{ nlioRecords[0].contact_no || '-' }}</div>
+          <div><strong>Date Interment</strong><br />{{ nlioRecords[0].date_interment || '-' }}</div>
+        </div>
+        <div>
+          <strong>Occupants</strong>
+          <ul>
+            <li *ngFor="let record of nlioRecords">{{ record.occupant || '-' }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>Assign Supplier to NLIO</h2>
+
+        <div class="field">
+          <label for="supplierItem">Supplier Item</label>
+          <select id="supplierItem" [(ngModel)]="selectedItemId" (ngModelChange)="handleItemChange($event)">
+            <option value="">Select item</option>
+            <option *ngFor="let item of items" [value]="item.id">{{ item.item_category }} - {{ item.item_name }}</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="supplier">Supplier</label>
+          <select id="supplier" [(ngModel)]="selectedSupplierKey" [disabled]="!selectedItemId">
+            <option value="">Select supplier</option>
+            <option *ngFor="let supplier of suppliers" [value]="supplier.bpar_i_person_id + '|' + supplier.s_bpartner_id">
+              {{ supplier.name1 }} - {{ supplier.email_add || 'No email' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="assignedBy">Assigned By</label>
+          <input id="assignedBy" [(ngModel)]="assignedBy" placeholder="Your name" />
+        </div>
+
+        <div class="row">
+          <button type="button" class="secondary" (click)="handleAssign()" [disabled]="saving">
+            {{ saving ? 'Saving...' : 'Assign Supplier' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>Current NLIO Assignments</h2>
+
+        <div *ngIf="!assignments.length" class="status">No assignments found.</div>
+
+        <div *ngIf="assignments.length" class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>bpar_i_person_id</th>
+                <th>s_bpartner_id</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Assigned By</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assignment of assignments">
+                <td>{{ assignment.bpar_i_person_id }}</td>
+                <td>{{ assignment.s_bpartner_id }}</td>
+                <td>{{ assignment.item_name || '-' }}</td>
+                <td>{{ assignment.item_category || '-' }}</td>
+                <td>{{ assignment.assigned_by || '-' }}</td>
+                <td><button type="button" class="danger" (click)="handleDelete(assignment.id)">Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

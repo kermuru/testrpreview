@@ -1,0 +1,369 @@
+<!-- Loading Overlay -->
+<div *ngIf="loading" class="fixed inset-0 bg-white/80 flex flex-col items-center justify-center z-[9999]">
+  <div class="animate-spin border-4 border-t-transparent border-green-500 rounded-full w-12 h-12 mb-4"></div>
+  <p class="text-green-700 font-medium text-base">Uploading with care… {{ uploadProgress }}%</p>
+
+  <div class="w-64 bg-gray-200 rounded-full h-2 mt-2">
+    <div class="bg-green-600 h-2 rounded-full" [style.width.%]="uploadProgress"></div>
+  </div>
+</div>
+
+<!-- Background Container -->
+<div
+  class="min-h-screen flex flex-col items-center justify-start bg-cover bg-center px-4 sm:px-6 lg:px-8 py-10"
+  [style.background-image]="'url(background.webp)'"
+>
+
+  <!-- Logo -->
+  <div class="w-full flex justify-center mb-10">
+    <img src="logo.png" alt="Logo" class="h-10 w-auto" />
+  </div>
+
+  <!-- Invalid Occupant -->
+  <div *ngIf="occupantStatus !== 'valid'" class="w-full max-w-2xl text-center mb-6">
+    <div class="bg-white/80 text-red-600 rounded-lg p-5 shadow-sm backdrop-blur">
+      {{ occupantMessage }}
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <ng-container *ngIf="occupantStatus === 'valid'">
+
+    <div class="w-full max-w-3xl bg-white/85 backdrop-blur-lg rounded-2xl shadow-xl p-8 sm:p-10 text-left">
+
+      <!-- Header -->
+      <div class="mb-10 text-center">
+        <h2 class="text-2xl sm:text-3xl font-medium text-gray-900 mb-4">
+          A Space to Remember
+        </h2>
+        <p class="text-gray-600 text-base max-w-xl mx-auto">
+          Submitted photos will be included in the interment presentation.
+        </p>
+      </div>
+
+      <!-- Occupant Info -->
+      <div class="mb-10 text-gray-800 text-sm space-y-1">
+        <p><span class="font-medium">Occupant:</span> {{ occupantName }}</p>
+        <p><span class="font-medium">Interment Date:</span> {{ intermentDate | date }}</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="uploadForm" (ngSubmit)="submitUpload()" class="space-y-10">
+
+        <!-- Email -->
+        <div class="space-y-2">
+          <label class="text-sm text-gray-700">
+            Your Email Address <span class="text-red-600">*</span>
+          </label>
+
+          <input
+            type="email"
+            formControlName="email_add"
+            placeholder="Enter your email"
+            class="w-full text-gray-800 rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            [disabled]="uploadForm.disabled"
+          />
+
+          <p class="text-xs text-gray-500">
+            Used to access and manage the uploaded photos.
+          </p>
+
+          <div *ngIf="uploadForm.get('email_add')?.touched && uploadForm.get('email_add')?.invalid"
+               class="text-red-600 text-xs">
+            <span *ngIf="uploadForm.get('email_add')?.errors?.['required']">Email is required.</span>
+            <span *ngIf="uploadForm.get('email_add')?.errors?.['email']">Enter a valid email.</span>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="space-y-2">
+          <label class="text-sm text-gray-700">
+            Your Name <span class="text-red-600">*</span>
+          </label>
+
+          <input
+            type="text"
+            formControlName="uploader_name"
+            placeholder="Enter your full name"
+            class="w-full text-gray-800 rounded-md border border-gray-300 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            [disabled]="uploadForm.disabled"
+          />
+
+          <div *ngIf="uploadForm.get('uploader_name')?.touched && uploadForm.get('uploader_name')?.invalid"
+               class="text-red-600 text-xs">
+            Name is required.
+          </div>
+        </div>
+
+        <!-- Calm Instruction Block -->
+         <p class="text-sm text-gray-500">
+          A few simple guidelines:
+        </p>
+
+        <div class="text-gray-600 text-sm space-y-3 leading-relaxed">
+          <p><span class="font-medium">Lighting —</span> Well lit, no harsh shadows or overexposure</p>
+          <p><span class="font-medium">Clarity —</span> Clear and in focus</p>
+          <p><span class="font-medium">Orientation —</span> Keep upright (rotate if needed)</p>
+          <p><span class="font-medium">Framing —</span> Keep a balanced shape (avoid very wide or very tall images)</p>
+        </div>
+
+        <!-- Upload -->
+        <div class="space-y-3">
+          <label class="text-sm text-gray-700">
+            Select Photos (Max 50 – JPG / PNG only) <span class="text-red-600">*</span>
+          </label>
+
+          <input
+            type="file"
+            multiple
+            accept=".jpg,.jpeg,.png"
+            (change)="onSlideshowFilesChange($event)"
+            class="w-full border border-dashed border-gray-300 rounded-md px-4 py-4 text-gray-500 cursor-pointer"
+            [disabled]="uploadForm.disabled"
+          />
+
+          <p class="text-xs text-gray-500">
+            Up to 50 images. JPG or PNG.
+          </p>
+        </div>
+
+        <div *ngIf="slideshowImages.length" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+
+          <div *ngFor="let img of slideshowImages; let i = index" class="relative group">
+
+            <img
+              [src]="img.preview"
+              class="w-full h-32 object-cover rounded-md"
+            />
+
+            <!-- Crop Button -->
+            <button
+              *ngIf="img.needsCrop"
+              type="button"
+              (click)="requestManualCrop(i)"
+              class="absolute top-1 left-1 bg-yellow-500 text-xs px-2 py-1 rounded z-10"
+            >
+              ✂️
+            </button>
+
+            <!-- ✅ CHECK ICON (RESTORED) -->
+            <div
+              class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+            >
+              <div
+                *ngIf="!img.needsCrop && !img.needsRotation"
+                class="bg-green-500 text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow"
+              >
+                ✔️
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <button
+              type="button"
+              (click)="removeSelectedFile(i)"
+              class="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
+            >
+              Remove
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Existing Photos -->
+        <div *ngIf="existingPhotos.length" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+
+          <div *ngFor="let photo of existingPhotos" class="relative group">
+            <img [src]="photo" class="w-full h-32 object-cover rounded-md" />
+
+            <button
+              type="button"
+              (click)="deleteExistingPhoto(photo)"
+              class="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
+            >
+              Delete
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Messages -->
+        <div *ngIf="message" class="bg-green-50 text-green-700 rounded-md p-3 text-sm">
+          {{ message }}
+        </div>
+
+        <div *ngIf="error" class="bg-red-50 text-red-700 rounded-md p-3 text-sm">
+          {{ error }}
+        </div>
+
+        <!-- Emotional Line -->
+        <div class="text-center text-gray-500 text-sm pt-4">
+          We’ll prepare these with care.
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+
+          <button
+            type="submit"
+            [disabled]="loading || uploadForm.disabled"
+            class="w-full sm:w-auto bg-[#b28648] text-white px-8 py-3 rounded-md"
+          >
+            {{ loading ? 'Uploading…' : 'Upload Photos' }}
+          </button>
+
+          <button
+            type="button"
+            (click)="goBackToLanding()"
+            class="w-full sm:w-auto text-gray-600 hover:text-gray-900 px-6 py-3"
+          >
+            Back to Home
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </ng-container>
+</div>
+
+<!-- Crop Modal (UNCHANGED FUNCTIONALITY) -->
+<div *ngIf="showCropModal" class="modal-overlay">
+  <div class="modal-content p-4 rounded-2xl shadow-lg bg-white max-w-lg w-full">
+    
+    <h3 class="text-lg font-semibold mb-4 text-center">Crop your photo</h3>
+
+    <div class="flex items-center justify-center gap-3">
+
+      <!-- Rotate Left -->
+      <button 
+        type="button" 
+        (click)="rotateImage(-90)"
+        class="bg-secondary hover:bg-gray-200 text-white  px-3 py-2 rounded-xl shadow-sm transition">
+        ⟲
+      </button>
+
+      <image-cropper
+        class="rounded-lg overflow-hidden border"
+        [imageFile]="fileToCrop!"
+        [maintainAspectRatio]="false"
+        [format]="'jpeg'"
+        [imageBase64]="rotatedImageBase64"
+        (imageCropped)="onImageCropped($event)">
+      </image-cropper>
+
+      <!-- Rotate Right -->
+      <button 
+        type="button" 
+        (click)="rotateImage(90)"
+        class="bg-secondary hover:bg-gray-200 text-white px-3 py-2 rounded-xl shadow-sm transition">
+        ⟳
+      </button>
+
+    </div>
+
+    <div class="mt-4 flex justify-end gap-2">
+      
+      <!-- Cancel -->
+      <button 
+        (click)="showCropModal = false"
+        class="bg-primary hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-xl transition">
+        Cancel
+      </button>
+
+      <!-- Confirm -->
+      <button 
+        (click)="confirmCrop()"
+        class="bg-primary-green hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-md transition">
+        Confirm Crop
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- Processing Overlay -->
+<div *ngIf="isProcessing" class="loading-overlay">
+  <div class="spinner"></div>
+  <p class="mt-4">Processing... {{ processingProgress }}%</p>
+
+  <div class="w-64 h-2 bg-gray-200 mt-4">
+    <div class="bg-green-600 h-2" [style.width.%]="processingProgress"></div>
+  </div>
+</div>
+
+    <style>
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #EEDC82;
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7); /* Dimmed background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000; /* High priority so it sits on top */
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      gap: 10px;
+    }
+
+    .btn-cancel {
+      background: #e53e3e;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    .btn-confirm {
+      background: #48bb78;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    /* In your component's CSS file */
+    .slideshow-preview {
+      width: 100%;
+      height: 128px; /* Matches your h-32 class */
+      object-fit: cover; /* Ensures images are cropped to fit the box without stretching */
+      border-radius: 8px;
+    }
+</style>
+
+
+

@@ -1,0 +1,76 @@
+<div class="supplier-page">
+  <div class="layout">
+    <a routerLink="/supplierio" class="top-link">Menu</a>
+
+    <div class="card stack">
+      <h1>Supplier Items</h1>
+
+      <div *ngIf="loading" class="status">Loading items...</div>
+      <div *ngIf="error" class="status error">{{ error }}</div>
+      <div *ngIf="message" class="status success">{{ message }}</div>
+
+      <div class="card stack">
+        <h2>{{ editingId ? 'Edit Supplier Item' : 'Create Supplier Item' }}</h2>
+
+        <div class="field">
+          <label for="itemName">Item Name</label>
+          <input id="itemName" [(ngModel)]="itemName" placeholder="Enter item name" />
+        </div>
+
+        <div class="field">
+          <label for="itemCategory">Item Category</label>
+          <input id="itemCategory" [(ngModel)]="itemCategory" placeholder="Services / Materials" />
+        </div>
+
+        <div class="field">
+          <label for="isActive">Status</label>
+          <select id="isActive" [(ngModel)]="isActive">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <button type="button" (click)="handleSubmit()" [disabled]="saving">
+            {{ saving ? 'Saving...' : editingId ? 'Update Item' : 'Create Item' }}
+          </button>
+          <button *ngIf="editingId" type="button" class="secondary" (click)="resetForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="card stack">
+        <h2>Supplier Item List</h2>
+
+        <div *ngIf="!items.length" class="status">No supplier items found.</div>
+
+        <div *ngIf="items.length" class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of items">
+                <td>{{ item.id }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.item_category }}</td>
+                <td>{{ item.is_active ? 'Active' : 'Inactive' }}</td>
+                <td>
+                  <div class="row">
+                    <button type="button" class="secondary" (click)="handleEdit(item)">Edit</button>
+                    <button type="button" class="danger" (click)="handleDelete(item.id)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,165 @@
+:host {
+  display: block;
+}
+
+.supplier-page {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f5f1ea;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.layout {
+  width: min(100%, 1180px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+.card.narrow {
+  width: min(100%, 720px);
+}
+
+.top-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #8b6b44;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.row.between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+  flex: 1 1 260px;
+}
+
+label {
+  font-size: 14px;
+  color: #5f5f5f;
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #d8d0c4;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+}
+
+button,
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #8b6b44;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button.secondary,
+.btn.secondary {
+  background: #4d6a87;
+}
+
+button.danger,
+.btn.danger {
+  background: #b64545;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.status {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f5f5f5;
+}
+
+.status.error {
+  background: #fde8e8;
+  color: #8f1d1d;
+}
+
+.status.success {
+  background: #e8f7ea;
+  color: #1b6e30;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ece7df;
+  text-align: left;
+  vertical-align: top;
+}
+
+.actions.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
